@@ -1,171 +1,103 @@
-# just-the-docs-template
+---
+title: COMSOL
+layout: home
+nav_order: 3
+---
 
-This is a *bare-minimum* template to create a [Jekyll] site that:
 
-- uses the [Just the Docs] theme;
-- can be built and published on [GitHub Pages];
-- can be built and previewed locally, and published on other platforms.
+# temp-guidacomsol
+Repo temporaneo per guida comsol, prima di creazione repo definitivo aperto
 
-More specifically, the created site:
+# Installation
 
-- uses a gem-based approach, i.e. uses a `Gemfile` and loads the `just-the-docs` gem;
-- uses the [GitHub Pages / Actions workflow] to build and publish the site on GitHub Pages.
+*TODO: add instruction for installing the license server*
 
-To get started with creating a site, just click "[use this template]"!
+To download and install COMSOL on your machine you just need to follow the next steps:
 
-If you want to maintain your docs in the `docs` directory of an existing project repo, see [Hosting your docs from an existing project repo](#hosting-your-docs-from-an-existing-project-repo).
+- Create a COMSOL account (username and password) here: [https://www.comsol.it/access/login](https://www.comsol.it/access/login)
+- Access with your account and get the COMSOL version you want: [https://www.comsol.it/product-download](https://www.comsol.it/product-download) (Note: if no selection is made, the last available will be downloaded, v6.1 at time of writing)
+- Extract the contents of the compressed folder
+- Open a terminal in that folder and run the following command: `./setup`
+- A window will open with some steps to follow and some options to choose (for example, it will be asked if the user wants to install the COMSOL guides and manuals)
+- Insert the license (this can be done by typing the name of the license server or by manually inserting the `license.dat` file)
+- Follow the steps until the installation is completed
 
-After completing the creation of your new site on GitHub, update it as needed:
+# The license
 
-## Replace the content of the template pages
+Each COMSOL license is valid for a single graphical user interface (GUI) associated with a user. With user it is meant the username with which you access your workstation or cluster.
+For example: the user **abc** (associated with the machine `abc@workstation.polito.it`) will be able to open on their computer only one COMSOL window. If the user **def** (associated with the workstation `def@workstation.polito.it`), who uses the same license as **abc**, tries to open COMSOL on their workstation, it will throw an error.
 
-Update the following files to your own content:
+A single user, on a single workstation, and with the same username, can open all the COMSOL windows they want (only with the FNL license, see below).
 
-- `index.md` (your new home page)
-- `README.md` (information for those who access your site repo on GitHub)
+To run multiple COMSOL simulations (or run multiple simulations and simultaneously prepare another one using the GUI) it is necessary to use the *batch mode*. To do this, you must follow some rules:
 
-## Changing the version of the theme and/or Jekyll
 
-Simply edit the relevant line(s) in the `Gemfile`.
+- Have a Floating Network License (FNL)
+- Have the same username on the workstations or clusters on which you want to run the simulations
 
-## Adding a plugin
+- Launch the simulation runs **before** opening the GUI (if it is necessary) 
 
-The Just the Docs theme automatically includes the [`jekyll-seo-tag`] plugin.
+Example:
 
-To add an extra plugin, you need to add it in the `Gemfile` *and* in `_config.yml`. For example, to add [`jekyll-default-layout`]:
+Let's say a COMSOL user wants to launch two simulations and prepare the setup for a third.
+They have the following accounts for workstations and clusters, all with the same COMSOL license installed:
 
-- Add the following to your site's `Gemfile`:
+- `abc@workstation1.polito.it`
+- `abc@workstation2.polito.it`
+- `def@workstation1.polito.it`
+- `abc@cluster.polito.it`
+- `ghi@cluster.polito.it`
 
-  ```ruby
-  gem "jekyll-default-layout"
-  ```
+The only way to run multiple simulations on different machines is to use the abc account.
+It is therefore necessary to launch the simulations in batch on the accounts `abc@cluster.polito.it` and `abc@workstation2.polito.it` and then prepare the setup of the next simulation on the GUI.
+Any attempt to open COMSOL (both in batch mode and in GUI mode) on def@workstation1.polito.it or on `ghi@cluster.polito.it` will be inhibited.
 
-- And add the following to your site's `_config.yml`:
+# Running simulations
+## Simulation in batch mode
 
-  ```yaml
-  plugins:
-    - jekyll-default-layout
-  ```
+To run a simulation in batch mode, you must use the following command:
 
-Note: If you are using a Jekyll version less than 3.5.0, use the `gems` key instead of `plugins`.
+<!-- create a bash code block -->
+```bash
+/home/USERNAME/comsol60/multiphysics/bin/comsol 
+-usebatchlic batch -np 16 -inputfile input.mph 
+-outputfile output.mph
+```
+Note: the order in which the flags are inserted must be maintained.
+More information on the possible targets and options of COMSOL can be found at the following link:
+https://doc.comsol.com/5.5/doc/com.comsol.help.comsol/comsol_ref_running.29.30.html
+In the case of using COMSOL on a cluster, with a single FNL license, it is possible to request an unlimited number of nodes and/or cores.
 
-## Publishing your site on GitHub Pages
+## Server-Client
+The server-client option of COMSOL allows you to prepare the setup of a simulation on a less powerful computer (client) and then launch the simulation on a machine with more computational resources (server).
+In this brief guide the server-client dynamic has not been explored in depth because it was not considered that it could bring great advantages over the classic ssh connection of Linux but it was nevertheless mentioned to clarify the existence of this possibility.
+More information can be found at the following link at the COMSOL official website: https://www.comsol.it
 
-1.  If your created site is `YOUR-USERNAME/YOUR-SITE-NAME`, update `_config.yml` to:
+## Useful links
 
-    ```yaml
-    title: YOUR TITLE
-    description: YOUR DESCRIPTION
-    theme: just-the-docs
+Account creation: https://www.comsol.it/access/login
 
-    url: https://YOUR-USERNAME.github.io/YOUR-SITE-NAME
+COMSOL download: https://www.comsol.it/product-download
 
-    aux_links: # remove if you don't want this link to appear on your pages
-      Template Repository: https://github.com/YOUR-USERNAME/YOUR-SITE-NAME
-    ```
+Guides and manuals: https://doc.comsol.com/6.1/docserver/#!/com.comsol.help.comsol/helpdesk/helpdesk.html
 
-2.  Push your updated `_config.yml` to your site on GitHub.
+Linux commands: https://doc.comsol.com/5.5/doc/com.comsol.help.comsol/comsol_ref_running.29.30.html
 
-3.  In your newly created repo on GitHub:
-    - go to the `Settings` tab -> `Pages` -> `Build and deployment`, then select `Source`: `GitHub Actions`.
-    - if there were any failed Actions, go to the `Actions` tab and click on `Re-run jobs`.
 
-## Building and previewing your site locally
 
-Assuming [Jekyll] and [Bundler] are installed on your computer:
+# Costs of the license
+For the purchase / renewal of COMSOL there are three possibilities:
 
-1.  Change your working directory to the root directory of your site.
+- Yearly license: base price from list and duration of 12 months
+- Perpetual license: base price from list and duration of 12 months, 60\% discount on the base price at renewal
+- University license (under negotiation)
 
-2.  Run `bundle install`.
 
-3.  Run `bundle exec jekyll serve` to build your site and preview it at `localhost:4000`.
+|                                 | FNL Annuale | FNL Perpetua |
+|---------------------------------|-------------|--------------|
+| COMSOL Multiphysics Base        | 1995€ +VAT  | 3990€ +VAT   |
+| Battery Design Module           | 995€ +VAT   | 1990€ +VAT   |
+| CAD Import Module               | 495€ +VAT   | 990€ +VAT    |
+| TOTAL  (1° anno)                | 3485€ +VAT  | 6970€ +VAT   |
+| TOTAL  (3 anni)                 | 10455€ +VAT | 9758€ +VAT   |
 
-    The built site is stored in the directory `_site`.
-
-## Publishing your built site on a different platform
-
-Just upload all the files in the directory `_site`.
-
-## Customization
-
-You're free to customize sites that you create with this template, however you like!
-
-[Browse our documentation][Just the Docs] to learn more about how to use this theme.
-
-## Hosting your docs from an existing project repo
-
-You might want to maintain your docs in an existing project repo. Instead of creating a new repo using the [just-the-docs template](https://github.com/just-the-docs/just-the-docs-template), you can copy the template files into your existing repo and configure the template's Github Actions workflow to build from a `docs` directory. You can clone the template to your local machine or download the `.zip` file to access the files.
-
-### Copy the template files
-
-1.  Create a `.github/workflows` directory at your project root if your repo doesn't already have one. Copy the `pages.yml` file into this directory. Github Actions searches this directory for workflow files.
-
-2.  Create a `docs` directory at your project root and copy all remaining template files into this directory.
-
-### Modify the Github Actions worklow
-
-The Github Actions workflow that builds and deploys your site to Github Pages is defined by the `pages.yml` file. You'll need to edit this file to that so that your build and deploy steps look to your `docs` directory, rather than the project root.
-
-1.  Set the default `working-directory` param for the build job.
-
-    ```yaml
-    build:
-      runs-on: ubuntu-latest
-      defaults:
-        run:
-          working-directory: docs
-    ```
-
-2.  Set the `working-directory` param for the Setup Ruby step.
-
-    ```yaml
-    - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-          bundler-cache: true
-          cache-version: 0
-          working-directory: '${{ github.workspace }}/docs'
-    ```
-
-3.  Set the path param for the Upload artifact step:
-
-    ```yaml
-    - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: "docs/_site/"
-    ```
-
-4.  Modify the trigger so that only changes within the `docs` directory start the workflow. Otherwise, every change to your project (even those that don't affect the docs) would trigger a new site build and deploy.
-
-    ```yaml
-    on:
-      push:
-        branches:
-          - "main"
-        paths:
-          - "docs/**"
-    ```
-
-## Licensing and Attribution
-
-This repository is licensed under the [MIT License]. You are generally free to reuse or extend upon this code as you see fit; just include the original copy of the license (which is preserved when you "make a template"). While it's not necessary, we'd love to hear from you if you do use this template, and how we can improve it for future use!
-
-The deployment GitHub Actions workflow is heavily based on GitHub's mixed-party [starter workflows]. A copy of their MIT License is available in [actions/starter-workflows].
-
-----
-
-[^1]: [It can take up to 10 minutes for changes to your site to publish after you push the changes to GitHub](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/creating-a-github-pages-site-with-jekyll#creating-your-site).
-
-[Jekyll]: https://jekyllrb.com
-[Just the Docs]: https://just-the-docs.github.io/just-the-docs/
-[GitHub Pages]: https://docs.github.com/en/pages
-[GitHub Pages / Actions workflow]: https://github.blog/changelog/2022-07-27-github-pages-custom-github-actions-workflows-beta/
-[Bundler]: https://bundler.io
-[use this template]: https://github.com/just-the-docs/just-the-docs-template/generate
-[`jekyll-default-layout`]: https://github.com/benbalter/jekyll-default-layout
-[`jekyll-seo-tag`]: https://jekyll.github.io/jekyll-seo-tag
-[MIT License]: https://en.wikipedia.org/wiki/MIT_License
-[starter workflows]: https://github.com/actions/starter-workflows/blob/main/pages/jekyll.yml
-[actions/starter-workflows]: https://github.com/actions/starter-workflows/blob/main/LICENSE
